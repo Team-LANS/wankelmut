@@ -1,0 +1,9 @@
+.Grid {
+    width: 100%;
+    display: grid;
+    grid-template-rows: repeat(auto-fill, auto);
+    grid-gap: 1em;
+    padding: 1em;
+}
+.Grid .Cell {
+}
