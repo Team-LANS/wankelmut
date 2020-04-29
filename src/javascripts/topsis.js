@@ -1,3 +1,5 @@
+const zipWith = (f, xs, ys) => xs.map((n, i) => f(n, ys[i]))
+
 const calculateBest = (data, columnHeaders) => {
   const transpose = array => array.reduce((r, a) => a.map((v, i) => [...(r[i] || []), v]), [])
 
@@ -15,29 +17,22 @@ const calculateBest = (data, columnHeaders) => {
 
   const weightedChoices = transpose(weightedData)
   const impacts = columnHeaders.map(header => header.impact)
-  // TODO: Simplify
+
   const distancesToIdeal = weightedChoices.map(choice => {
-    const differences = choice.map((value, index) => {
+    return choice.map((value, index) => {
       const solutionValue = impacts[index] ? idealSolution[index] : worstSolution[index]
       return Math.pow(solutionValue - value, 2)
     })
-    return Math.sqrt(differences.reduce((previous, element) => previous + element, 0))
-  })
-  console.table(distancesToIdeal)
+  }).map(differences => Math.sqrt(differences.reduce((previous, element) => previous + element, 0)))
+
   const distancesToWorst = weightedChoices.map(choice => {
-    const differences = choice.map((value, index) => {
+    return choice.map((value, index) => {
       const solutionValue = !impacts[index] ? idealSolution[index] : worstSolution[index]
       return Math.pow(solutionValue - value, 2)
     })
-    return Math.sqrt(differences.reduce((previous, element) => previous + element, 0))
-  })
-  console.table(distancesToWorst)
-  // TODO: Replace with Zip
-  const relativeDistances = Array(distancesToWorst.length)
-  for (let i = 0; i < distancesToWorst.length; i++) {
-    const sum = distancesToIdeal[i] + distancesToWorst[i]
-    relativeDistances[i] = distancesToWorst[i] / sum
-  }
+  }).map(differences => Math.sqrt(differences.reduce((previous, element) => previous + element, 0)))
+
+  const relativeDistances = zipWith((x, y) => (x / (x + y)), distancesToWorst, distancesToIdeal)
   return relativeDistances.indexOf(Math.max(...relativeDistances))
 }
 
