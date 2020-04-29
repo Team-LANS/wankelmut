@@ -1,0 +1,6 @@
+.ColumnHeader {
+    display: flex;
+    flex-direction: column;
+}
+
+

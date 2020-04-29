@@ -4,9 +4,15 @@ import classes from './Grid.module.css'
 import RowHeader from '../../components/Grid/RowHeader/RowHeader'
 import ColumnHeader from '../../components/Grid/ColumnHeader/ColumnHeader'
 import Cell from '../../components/Grid/Cell/Cell'
+import calculateBest from '../../javascripts/topsis'
 
 const Grid = (props) => {
-  const [columnHeaders, setColumnHeaders] = useState(['Entertainment', 'Facilities', 'TravelCost', 'Accomodation'])
+  const [columnHeaders, setColumnHeaders] = useState([
+    { name: 'Entertainment', weight: 4, impact: true },
+    { name: 'Facilities', weight: 2, impact: true },
+    { name: 'TravelCost', weight: 6, impact: false },
+    { name: 'Accomodation', weight: 8, impact: false }
+  ])
   const [rowHeaders, setRowHeaders] = useState(['Hogwarts', 'Hogsmead', 'Azkaban'])
 
   const [data, setData] = useState([
@@ -18,54 +24,15 @@ const Grid = (props) => {
   const [bestIndex, setBestIndex] = useState(0)
 
   useEffect(() => {
-    setBestIndex(calculateBest())
-  }, [data])
-
-  const calculateBest = () => {
-    const transpose = array => array.reduce((r, a) => a.map((v, i) => [...(r[i] || []), v]), [])
-
-    const transposed = transpose(data)
-    const normalizedData = transposed.map(row => {
-      const normalizer = Math.sqrt(row.reduce((previous, element) => previous + Math.pow(element, 2), 0))
-      return normalizer > 0 ? row.map(value => value / normalizer) : 0
-    })
-    const weights = [4, 2, 6, 8]
-    const weightedData = normalizedData.map((row, index) => row.map(value => value * weights[index]))
-    const idealSolution = weightedData.map(criteria => Math.max.apply(null, criteria))
-    const worstSolution = weightedData.map(criteria => Math.min.apply(null, criteria))
-
-    const weightedChoices = transpose(weightedData)
-    const impact = [true, true, false, false]
-    // TODO: Simplify
-    const distancesToIdeal = weightedChoices.map(choice => {
-      const differences = choice.map((value, index) => {
-        const solutionValue = impact[index] ? idealSolution[index] : worstSolution[index]
-        return Math.pow(solutionValue - value, 2)
-      })
-      return Math.sqrt(differences.reduce((previous, element) => previous + element, 0))
-    })
-    const distancesToWorst = weightedChoices.map(choice => {
-      const differences = choice.map((value, index) => {
-        const solutionValue = !impact[index] ? idealSolution[index] : worstSolution[index]
-        return Math.pow(solutionValue - value, 2)
-      })
-      return Math.sqrt(differences.reduce((previous, element) => previous + element, 0))
-    })
-    // TODO: Replace with Zip
-    const relativeDistances = Array(distancesToWorst.length)
-    for (let i = 0; i < distancesToWorst.length; i++) {
-      const sum = distancesToIdeal[i] + distancesToWorst[i]
-      relativeDistances[i] = distancesToWorst[i] / sum
-    }
-    return relativeDistances.indexOf(Math.max(...relativeDistances))
-  }
+    setBestIndex(calculateBest(data, columnHeaders))
+  }, [data, columnHeaders])
 
   const renderColumnHeaders = () => {
     return columnHeaders.map((header, index) => {
       return <ColumnHeader
         key={`columnHeader${index}`}
-        value={header}
-        onChange={e => changeColumnHeader(index, e.target.value)}
+        header={header}
+        onHeaderChange={(header) => changeColumnHeader(index, header)}
         className={classes.Cell}>{header}</ColumnHeader>
     })
   }
@@ -76,7 +43,7 @@ const Grid = (props) => {
   }
 
   const addColum = () => {
-    setColumnHeaders(previous => [...previous, ''])
+    setColumnHeaders(previous => [...previous, { name: '', weight: 0, impact: true }])
     setData(previous => [...previous].map(row => [...row, 0]))
   }
 
