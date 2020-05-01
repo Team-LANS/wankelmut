@@ -19,7 +19,7 @@ describe('calculateBest', () => {
 
   describe('with null values', () => {
     it('should return best index', () => {
-      const choices = [[1, null], [3, 4]]
+      const choices = [[1, null], [1, 3]]
 
       expect(calculateBest(choices, headers)).toEqual(1)
     })

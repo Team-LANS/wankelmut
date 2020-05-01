@@ -12,7 +12,7 @@ export const normalizeMatrix = matrix => matrix.map(normalizeRow)
 export const distance = (base, reference) => {
   const distance = zipWith((x, y) => Math.pow(x - y, 2), base, reference)
     .reduce((previous, element) => previous + element, 0)
-  return Math.sqrt(distance())
+  return Math.sqrt(distance)
 }
 
-export const distanceMatrix = (base, reference) => base.map(row => distance(base, reference))
+export const distanceMatrix = (base, reference) => base.map(row => distance(row, reference))

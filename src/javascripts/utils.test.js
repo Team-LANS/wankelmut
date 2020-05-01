@@ -1,4 +1,4 @@
-import { normalizeRow, transpose, zipWith } from './utils'
+import { distance, distanceMatrix, normalizeRow, transpose, zipWith } from './utils'
 
 describe('zipWith', () => {
   it('should do zip two array with function', () => {
@@ -20,5 +20,21 @@ describe('normalizeRow', () => {
     const result = normalizeRow([3, 4])
 
     expect(result).toEqual([0.6, 0.8])
+  })
+})
+
+describe('distance', () => {
+  it('should return the distance to a reference', () => {
+    const reference = [0, 0]
+
+    expect(distance([3, 4], reference)).toEqual(5)
+  })
+})
+
+describe('distanceMatrix', () => {
+  it('should return the distances to a reference', () => {
+    const reference = [0, 0]
+
+    expect(distanceMatrix([[4, 3], [3, 4]], reference)).toEqual([5, 5])
   })
 })
