@@ -5,7 +5,8 @@ module.exports = {
   },
   extends: [
     'plugin:react/recommended',
-    'standard'
+    'plugin:jest/recommended',
+    'standard',
   ],
   globals: {
     Atomics: 'readonly',
@@ -19,7 +20,8 @@ module.exports = {
     sourceType: 'module'
   },
   plugins: [
-    'react'
+    'react',
+    'jest'
   ],
   rules: {
     'react/prop-types': 0

@@ -12,7 +12,6 @@ const calculateBest = (data, columnHeaders) => {
 
   const weightedData = normalizedData.map((row, index) => row.map(value => value * weights[index]))
   const idealSolution = weightedData.map(criteria => Math.max.apply(null, criteria))
-  console.table(idealSolution)
   const worstSolution = weightedData.map(criteria => Math.min.apply(null, criteria))
 
   const weightedChoices = transpose(weightedData)
