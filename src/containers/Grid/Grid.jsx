@@ -39,12 +39,12 @@ const Grid = (props) => {
 
   const addRow = () => {
     setRowHeaders(previous => [...previous, ''])
-    setData(previous => [...previous, Array(columnHeaders.length).fill(0)])
+    setData(previous => [...previous, Array(columnHeaders.length).fill(null)])
   }
 
   const addColum = () => {
     setColumnHeaders(previous => [...previous, { name: '', weight: 0, impact: true }])
-    setData(previous => [...previous].map(row => [...row, 0]))
+    setData(previous => [...previous].map(row => [...row, null]))
   }
 
   const changeRowHeader = (rowIndex, value) => {
